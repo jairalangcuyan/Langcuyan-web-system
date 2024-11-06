@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"> <!-- Set character encoding for the document -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Make the page responsive on mobile -->
+    <title>Login and Signup with Firebase</title> <!-- Title of the page -->
+    <link rel="stylesheet" href="style.css"> <!-- Link to custom CSS file -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" /> <!-- Link to Leaflet CSS for map styling -->
+</head>
+<body>
+    <div class="container"> <!-- Container for login/signup forms -->
+        <h1>Welcome</h1>
+        <form id="login-form" onsubmit="login(event)"> <!-- Login form with onsubmit calling login function -->
+            <h2>Login</h2>
+            <input type="email" id="login-email" placeholder="Email" required> <!-- Input for email in login form -->
+            <input type="password" id="login-password" placeholder="Password" required> <!-- Input for password in login form -->
+            <button type="submit">Login</button> <!-- Submit button for login form -->
+            <p><a href="#" onclick="toggleForms()">Sign Up</a></p> <!-- Link to toggle to Signup form -->
+        </form>
+        
+        <form id="signup-form" style="display: none;" onsubmit="signup(event)"> <!-- Signup form, hidden initially, calls signup on submit -->
+            <h2>Sign Up</h2>
+            <input type="email" id="signup-email" placeholder="Email" required> <!-- Input for email in signup form -->
+            <input type="password" id="signup-password" placeholder="Password" required> <!-- Input for password in signup form -->
+            <button type="submit">Sign Up</button> <!-- Submit button for signup form -->
+            <p><a href="#" onclick="toggleForms()">Login</a></p> <!-- Link to toggle back to Login form -->
+        </form>
+        
+    </div>
+
+    <div id="map-container" style="display: none;"> <!-- Container for map and location search, hidden initially -->
+        <h2>Search Location</h2>
+        <div id="search-container"> <!-- Container for search input and buttons -->
+            <input type="text" id="search-input" placeholder="Search location..."> <!-- Input for location search query -->
+            <button id="search-button">Search</button> <!-- Button to trigger location search -->
+            <div class="notification-container"> <!-- Container for notification and logout buttons -->
+                <button id="notification-button">🔔</button> <!-- Button to view notifications -->
+                <div id="notification-indicator" class="notification-indicator" style="display: none;"></div> <!-- Indicator for new notifications, hidden initially -->
+                <button id="logout-button">Logout</button> <!-- Logout button -->
+            </div>            
+        </div>
+        <div id="map"></div> <!-- Div where the map will be rendered -->
+    </div>
+
+    <!-- Modal and Overlay for Notification -->
+    <div id="overlay" class="overlay" style="display: none;"></div> <!-- Background overlay for modal, hidden initially -->
+    <div id="notification-modal" class="notification-modal" style="display: none;"> <!-- Notification modal, hidden initially -->
+        <div class="modal-content"> <!-- Content container within the modal -->
+            <span id="close-button" class="close-button">&times;</span> <!-- Button to close the modal -->
+            <div class="notification"> <!-- Container for notification message -->
+                <p id="notification">Last searched location: <span id="last-location">[Your Location]</span></p> <!-- Display last searched location -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> <!-- Link to Leaflet JavaScript library for map functionality -->
+    <script src="loginsignup.js" type="module"></script> <!-- Link to JavaScript module for login and signup functions -->
+    <script src="map.js" type="module"></script> <!-- Link to JavaScript module for map and notification handling -->
+</body>
+</html>

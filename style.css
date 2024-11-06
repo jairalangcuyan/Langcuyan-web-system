@@ -1,0 +1,157 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    flex-direction: column;
+}
+
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 320px;
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input, button {
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+#map-container {
+    display: none;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 1300px;
+}
+
+#map {
+    width: 100%;
+    height: 500px;
+    border-radius: 8px;
+}
+
+#search-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+#search-container input {
+    flex: 1;
+}
+
+#search-container button {
+    width: 100px;
+}
+
+/* Overlay styles */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+    z-index: 999; /* Ensure it covers every w thing else */
+}
+
+/* Modal styles */
+.notification-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000; /* On top of the overlay */
+    width: 80%; /* Set a longer width for landscape */
+    height: auto; /* Adjust height as needed */
+    max-height: 300px; /* Limit max height for overflow */
+    overflow-y: auto; /* Enable scrolling if content is too long */
+    padding: 10px; /* Add padding for better spacing */
+}
+
+/* Content inside the modal */
+.modal-content {
+    padding: 10px;
+    text-align: left; /* Align text to the right */
+}
+
+/* Close button styles */
+.close-button {
+    float: right;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Notification styles */
+.notification {
+    margin-bottom: 10px; /* Space between notifications */
+    background-color: #f9f9f9; /* Light background for notifications */
+}
+
+.notification-container {
+    position: relative; /* To position the indicator correctly */
+    display: inline-block; /* To wrap the button and indicator */
+}
+
+.notification-indicator {
+    position: absolute; /* Position it relative to the button */
+    top: -2px; /* Adjust to position above the button */
+    right: 105px; /* Adjust to position above the button */
+    width: 10px; /* Width of the dot */
+    height: 10px; /* Height of the dot */
+    background-color: red; /* Red color for the dot */
+    border-radius: 50%; /* Make it circular */
+}
+
+
+.notification-item {
+    border: 1px solid #ccc; /* Light gray border for notifications */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px; /* Padding inside notification */
+    margin-bottom: 10px; /* Space between notifications */
+    background-color: #f9f9f9; /* Light background for notifications */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Optional: add a shadow effect */
+}
+
+
+#notification {
+    margin-top: 20px;
+    max-height: 300px; /* Limit max height for overflow */
+    overflow-y: auto; /* Enable scrolling if content is too long */
+}
