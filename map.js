@@ -82,7 +82,7 @@ let requestQueue = [];
 let isRequestProcessing = false;
 
 async function sendWebhook(notification) {
-    const serverURL = 'http://localhost:3000/send-webhook';
+    const serverURL = 'http://localhost:3000/proxy-webhook'; // Make sure this matches your server
     const response = await fetch(serverURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
