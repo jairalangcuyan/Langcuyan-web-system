@@ -8,7 +8,7 @@ const PORT = 3000;
 app.use(express.json());
 app.use(cors());
 
-app.post('/send-webhook', async (req, res) => { // Update the endpoint to '/send-webhook'
+app.post('/send-webhook', async (req, res) => {
     try {
         const response = await axios.post('https://webhook.site/5d6349bc-68e5-4b92-94d7-03aa9fccbf0a', req.body, {
             headers: { 'Content-Type': 'application/json' },
@@ -18,7 +18,6 @@ app.post('/send-webhook', async (req, res) => { // Update the endpoint to '/send
         res.status(500).json({ error: error.message });
     }
 });
-
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
