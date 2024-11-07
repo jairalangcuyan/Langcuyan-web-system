@@ -82,7 +82,7 @@ let requestQueue = [];
 let isRequestProcessing = false;
 
 async function sendWebhook(notification) {
-    const serverURL = 'http://localhost:3000/proxy-webhook'; // Make sure this matches your server
+    const serverURL = 'http://localhost:3000/send-webhook'; // Update the URL to the new endpoint
     const response = await fetch(serverURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -96,6 +96,7 @@ async function sendWebhook(notification) {
 
     return await response.json();
 }
+
 
 async function processQueue() {
     if (isRequestProcessing || requestQueue.length === 0) return;
