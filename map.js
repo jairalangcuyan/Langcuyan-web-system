@@ -14,7 +14,22 @@ function onLoginSuccess(email) {
         email: email, // User email for notification
         timestamp: new Date().toISOString(), // Current timestamp for notification
     };
-    queueNotification(loginNotification); // Add the login notification to the queue
+    addNotificationToUI(loginNotification); // Show login notification immediately
+    queueNotification(loginNotification); // Add the login notification to the webhook queue
+}
+
+// Function to add notification to UI without waiting for webhook
+function addNotificationToUI(notification) {
+    notifications.unshift(notification); // Add notification to the notifications array
+    showNotificationIndicator(); // Show notification indicator
+    displayNotifications(); // Update notification modal if open
+}
+
+// Modified queueNotification function
+export function queueNotification(notification) {
+    addNotificationToUI(notification); // Display notification in UI immediately
+    requestQueue.push(notification); // Add notification to the request queue for webhook
+    processQueue(); // Start processing the webhook queue
 }
 
 // Wait for the DOM to be fully loaded before setting up event listeners
@@ -24,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loginButton.addEventListener('click', () => { // Add click event to login button
             const email = document.getElementById('login-email').value; // Get email input value
             const password = document.getElementById('login-password').value; // Get password input value
-            // Handle login logic and call onLoginSuccess with email
             onLoginSuccess(email); 
         });
     }
@@ -108,7 +122,6 @@ async function processQueue() {
     try {
         await sendWebhook(notification); // Send the notification to the server
         console.log("Notification sent successfully:", notification); // Log success message
-        notifications.unshift(notification); // Add notification to the notifications array
     } catch (error) {
         console.error("Failed to send notification:", error); // Log error message
         requestQueue.unshift(notification); // Re-add notification to the queue
@@ -120,18 +133,9 @@ async function processQueue() {
     }
 }
 
-export function queueNotification(notification) {
-    requestQueue.push(notification); // Add notification to the request queue
-    showNotificationIndicator(); // Show notification indicator
-    processQueue(); // Process the notification queue
-}
-
 // Function to search for a location and display it on the map
 function searchLocation(query, map) {
     const geocodingUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1`; // Geocoding URL with query
-
-    console.log('Fetching location for query:', query); // Log search query
-    console.log('Geocoding URL:', geocodingUrl); // Log geocoding URL
 
     fetch(geocodingUrl)
         .then(response => {
@@ -155,7 +159,8 @@ function searchLocation(query, map) {
                     timestamp: new Date().toISOString(), // Current timestamp for notification
                 };
 
-                queueNotification(notification); // Add location search notification to queue
+                addNotificationToUI(notification); // Show location search notification immediately
+                queueNotification(notification); // Add location search notification to the webhook queue
             } else {
                 alert('Location not found'); // Alert if no location is found
             }
@@ -193,76 +198,35 @@ function showNotification() {
 
     overlay.style.display = 'block'; // Show overlay
     notificationModal.style.display = 'block'; // Show notification modal
-    isNotificationOpen = true; // Set notification open flag to true
+    isNotificationOpen = true; // Set notification open flag
 }
 
-// Function to hide the notification indicator
-function hideNotificationIndicator() {
-    const notificationIndicator = document.getElementById('notification-indicator'); // Get notification indicator element
-    notificationIndicator.style.display = 'none'; // Hide the notification indicator
+// Function to hide the notification modal
+function closeNotification() {
+    const overlay = document.getElementById('overlay'); // Get overlay element
+    const notificationModal = document.getElementById('notification-modal'); // Get notification modal element
+    overlay.style.display = 'none'; // Hide overlay
+    notificationModal.style.display = 'none'; // Hide notification modal
+    isNotificationOpen = false; // Set notification open flag
 }
 
 // Function to show the notification indicator
 function showNotificationIndicator() {
-    const notificationIndicator = document.getElementById('notification-indicator'); // Get notification indicator element
-    notificationIndicator.style.display = 'block'; // Show the notification indicator
+    const indicator = document.getElementById('notification-indicator'); // Get notification indicator element
+    indicator.style.display = 'block'; // Show notification indicator
 }
 
-// Function to close the notification modal
-function closeNotification() {
-    const overlay = document.getElementById('overlay'); // Get overlay element
-    const notificationModal = document.getElementById('notification-modal'); // Get notification modal element
-
-    overlay.style.display = 'none'; // Hide overlay
-    notificationModal.style.display = 'none'; // Hide notification modal
-    isNotificationOpen = false; // Set notification open flag to false
+// Function to hide the notification indicator
+function hideNotificationIndicator() {
+    const indicator = document.getElementById('notification-indicator'); // Get notification indicator element
+    indicator.style.display = 'none'; // Hide notification indicator
 }
 
-// Function to log out the user
+// Function to handle user logout
 function logout() {
-    notifications = []; // Clear notifications on logout
-    currentUser = null; // Clear current user data
     isLoggedIn = false; // Set login status to false
-    clearInputFields(); // Clear all input fields
-    showLoginForm(); // Show login form
-}
-
-// Function to clear input fields
-function clearInputFields() {
-    document.getElementById('login-email').value = ''; // Clear email input field
-    document.getElementById('login-password').value = ''; // Clear password input field
-    document.getElementById('signup-email').value = ''; // Clear signup email input field
-    document.getElementById('signup-password').value = ''; // Clear signup password input field
-}
-
-// Function to show login form and hide map container
-function showLoginForm() {
+    currentUser = null; // Clear current user email
+    notifications = []; // Clear notifications
     document.querySelector('.container').style.display = 'block'; // Show login container
     document.getElementById('map-container').style.display = 'none'; // Hide map container
-}
-
-// Dummy function to simulate user login
-function login(event) {
-    event.preventDefault(); // Prevent default form submission
-    const email = document.getElementById('login-email').value; // Get email input value
-    const notification = {
-        action: "Login", // Action type for notification
-        email: email, // User email for notification
-        timestamp: new Date().toISOString(), // Current timestamp for notification
-    };
-    queueNotification(notification); // Add login notification to queue
-    onLoginSuccess(email); // Call onLoginSuccess with email
-}
-
-// Dummy function to simulate user signup
-function signup(event) {
-    event.preventDefault(); // Prevent default form submission
-    const email = document.getElementById('signup-email').value; // Get signup email input value
-    const notification = {
-        action: "Sign Up", // Action type for notification
-        email: email, // User email for notification
-        timestamp: new Date().toISOString(), // Current timestamp for notification
-    };
-    queueNotification(notification); // Add signup notification to queue
-    alert('Sign up successful! You can now log in.'); // Alert user on successful signup
 }
