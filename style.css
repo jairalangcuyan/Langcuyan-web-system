@@ -86,6 +86,7 @@ button:hover {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
     z-index: 999; /* Ensure it covers everything else */
+    display: none; /* Initially hidden */
 }
 
 /* Modal styles */
@@ -97,61 +98,70 @@ button:hover {
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-    z-index: 1000; /* On top of the overlay */
-    width: 80%; /* Set a longer width for landscape */
-    height: auto; /* Adjust height as needed */
-    max-height: 300px; /* Limit max height for overflow */
-    overflow-y: auto; /* Enable scrolling if content is too long */
-    padding: 10px; /* Add padding for better spacing */
-}
-
-/* Content inside the modal */
-.modal-content {
+    z-index: 1000;
+    width: 80%;
+    max-height: 400px;
+    overflow-y: auto;
     padding: 10px;
-    text-align: left; /* Align text to the right */
+    display: none; /* Initially hidden */
 }
 
-/* Close button styles */
-.close-button {
-    float: right;
-    font-size: 20px;
-    cursor: pointer;
+/* Close button */
+#close-button {
+    position: absolute;  /* Use absolute positioning to control placement */
+    top: 2px;           /* Adjust this value to move it higher or lower */
+    right: 10px;         /* Keep it aligned to the right */
+    font-size: 30px;     /* Adjust size of the button if needed */
+    background: none;    /* Remove background */
+    border: none;        /* Remove border */
+    color: #000;         /* Adjust color as needed */
+    cursor: pointer;     /* Show pointer on hover */
+}
+
+#close-button:hover {
+    color: red;           /* Optional: change color on hover */
 }
 
 /* Notification styles */
 .notification {
-    margin-bottom: 10px; /* Space between notifications */
+    margin-bottom: 10px;
     background-color: #f9f9f9; /* Light background for notifications */
 }
 
 .notification-container {
-    position: relative; /* To position the indicator correctly */
-    display: inline-block; /* To wrap the button and indicator */
+    position: relative;
+    display: inline-block;
 }
 
 .notification-indicator {
-    position: absolute; /* Position it relative to the button */
-    top: -2px; /* Adjust to position above the button */
-    right: 105px; /* Adjust to position above the button */
-    width: 10px; /* Width of the dot */
-    height: 10px; /* Height of the dot */
-    background-color: red; /* Red color for the dot */
-    border-radius: 50%; /* Make it circular */
+    position: absolute;
+    top: -2px;
+    right: 105px;
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
 }
 
-
+/* Notification items */
 .notification-item {
-    border: 1px solid #ccc; /* Light gray border for notifications */
-    border-radius: 4px; /* Rounded corners */
-    padding: 10px; /* Padding inside notification */
-    margin-bottom: 10px; /* Space between notifications */
-    background-color: #f9f9f9; /* Light background for notifications */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Optional: add a shadow effect */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-
+/* Notification container with scroll behavior */
 #notification {
     margin-top: 20px;
-    max-height: 300px; /* Limit max height for overflow */
-    overflow-y: auto; /* Enable scrolling if content is too long */
+    max-height: 250px;
+    overflow-y: hidden;
+    padding-right: 10px;
+}
+
+#notification.scrollable {
+    max-height: 150px; /* Reduce max height to allow scrolling */
+    overflow-y: auto;  /* Enable vertical scroll */
 }
