@@ -1,13 +1,17 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
+    background-image: url(bg1.jpg);
+    background-size: cover;           /* Ensure the image covers the entire viewport */
+    background-position: center center; /* Center the image horizontally and vertically */
+    background-repeat: no-repeat;     /* Prevent image repetition */
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100vh;                    /* Full height of the viewport */
     margin: 0;
     flex-direction: column;
 }
+
 
 .container {
     background: white;
@@ -109,7 +113,7 @@ button:hover {
 /* Close button */
 #close-button {
     position: absolute;  /* Use absolute positioning to control placement */
-    top: 10px;           /* Adjust this value to move it higher or lower */
+    top: 1px;           /* Adjust this value to move it higher or lower */
     right: 10px;         /* Keep it aligned to the right */
     font-size: 24px;     /* Adjust size of the button if needed */
     background: none;    /* Remove background */
@@ -123,9 +127,11 @@ button:hover {
 }
 
 /* Notification styles */
-.notification {
-    margin-bottom: 10px;
-    background-color: #f9f9f9; /* Light background for notifications */
+#notification {
+    margin-top: 20px;
+    max-height: 250px;      /* Maximum height of the notification container */
+    overflow-y: hidden;    /* Initially, hide overflow */
+    padding-right: 10px;
 }
 
 .notification-container {
@@ -162,6 +168,6 @@ button:hover {
 }
 
 #notification.scrollable {
-    max-height: 150px; /* Reduce max height to allow scrolling */
-    overflow-y: auto;  /* Enable vertical scroll */
+    max-height: 150px;     /* Decrease max height when scrolled */
+    overflow-y: auto;      /* Allow scrolling when the content overflows */
 }

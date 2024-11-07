@@ -125,11 +125,12 @@ async function processQueue() {
 function updateNotificationScroll() {
     const notificationContainer = document.getElementById('notification');
     if (notifications.length > 3) {
-        notificationContainer.classList.add('scrollable');
+        notificationContainer.classList.add('scrollable');  // Enable scrolling
     } else {
-        notificationContainer.classList.remove('scrollable');
+        notificationContainer.classList.remove('scrollable');  // Disable scrolling
     }
 }
+
 
 // Function to queue notifications and show indicator
 export function queueNotification(notification) {
