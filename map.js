@@ -3,21 +3,6 @@ let isNotificationOpen = false; // Flag to track if the notification modal is op
 let isLoggedIn = false; // Flag to track if the user is logged in
 let currentUser = null; // To store the current logged-in user
 
-let requestQueue = [];
-let isRequestProcessing = false;
-
-document.addEventListener('DOMContentLoaded', () => {
-    const loginButton = document.getElementById('login-button');
-    if (loginButton) {
-        loginButton.addEventListener('click', () => {
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            // Handle login logic and call onLoginSuccess with email
-            onLoginSuccess(email);
-        });
-    }
-});
-
 // Function to be called when user successfully logs in
 function onLoginSuccess(email) {
     isLoggedIn = true;
@@ -32,7 +17,19 @@ function onLoginSuccess(email) {
     queueNotification(loginNotification); // Queue the login notification for the new user
 }
 
-// Function to show map and set up map functionality
+// Wait for the DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    const loginButton = document.getElementById('login-button');
+    if (loginButton) {
+        loginButton.addEventListener('click', () => {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            // Handle login logic and call onLoginSuccess with email
+            onLoginSuccess(email); 
+        });
+    }
+});
+
 export function showMap() {
     document.querySelector('.container').style.display = 'none';
     document.getElementById('map-container').style.display = 'block';
@@ -81,7 +78,9 @@ export function showMap() {
     });
 }
 
-// Function to process and send notifications
+let requestQueue = [];
+let isRequestProcessing = false;
+
 async function sendWebhook(notification) {
     const serverURL = 'http://localhost:3000/send-webhook'; // Update the URL to the new endpoint
     const response = await fetch(serverURL, {
@@ -98,7 +97,7 @@ async function sendWebhook(notification) {
     return await response.json();
 }
 
-// Function to process notification queue
+
 async function processQueue() {
     if (isRequestProcessing || requestQueue.length === 0) return;
 
@@ -108,37 +107,24 @@ async function processQueue() {
     try {
         await sendWebhook(notification);
         console.log("Notification sent successfully:", notification);
-        notifications.unshift(notification);
-        updateNotificationScroll(); // Check for scroll update after adding notification
+        notifications.unshift(notification); 
     } catch (error) {
         console.error("Failed to send notification:", error);
-        requestQueue.unshift(notification);
+        requestQueue.unshift(notification); 
     } finally {
         isRequestProcessing = false;
         if (requestQueue.length > 0) {
-            setTimeout(processQueue, 500);
+            setTimeout(processQueue, 500); 
         }
     }
 }
 
-// Function to update the scrollability of the notification container
-function updateNotificationScroll() {
-    const notificationContainer = document.getElementById('notification');
-    if (notifications.length > 3) {
-        notificationContainer.classList.add('scrollable');
-    } else {
-        notificationContainer.classList.remove('scrollable');
-    }
-}
-
-// Function to queue notifications and show indicator
 export function queueNotification(notification) {
     requestQueue.push(notification);
     showNotificationIndicator();
     processQueue();
 }
 
-// Function to search for a location using OpenStreetMap geocoding API
 function searchLocation(query, map) {
     const geocodingUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1`;
 
@@ -178,7 +164,6 @@ function searchLocation(query, map) {
         });
 }
 
-// Function to show notification modal
 function showNotification() {
     const overlay = document.getElementById('overlay');
     const notificationModal = document.getElementById('notification-modal');
@@ -208,19 +193,16 @@ function showNotification() {
     isNotificationOpen = true;
 }
 
-// Function to hide notification indicator
 function hideNotificationIndicator() {
     const notificationIndicator = document.getElementById('notification-indicator');
     notificationIndicator.style.display = 'none';
 }
 
-// Function to show notification indicator
 function showNotificationIndicator() {
     const notificationIndicator = document.getElementById('notification-indicator');
     notificationIndicator.style.display = 'block';
 }
 
-// Function to close the notification modal
 function closeNotification() {
     const overlay = document.getElementById('overlay');
     const notificationModal = document.getElementById('notification-modal');
@@ -230,17 +212,15 @@ function closeNotification() {
     isNotificationOpen = false;
 }
 
-// Function to handle logout functionality
 function logout() {
     // Clear notifications when user logs out
-    notifications = [];
-    currentUser = null;
+    notifications = []; 
+    currentUser = null; 
     isLoggedIn = false;
     clearInputFields();
     showLoginForm();
 }
 
-// Function to clear input fields
 function clearInputFields() {
     document.getElementById('login-email').value = '';
     document.getElementById('login-password').value = '';
@@ -248,7 +228,6 @@ function clearInputFields() {
     document.getElementById('signup-password').value = '';
 }
 
-// Function to show the login form after logout
 function showLoginForm() {
     document.querySelector('.container').style.display = 'block';
     document.getElementById('map-container').style.display = 'none';
