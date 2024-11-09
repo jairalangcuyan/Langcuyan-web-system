@@ -43,7 +43,7 @@ function searchLocation() {
 
 // Function to send a webhook notification
 function sendWebhookNotification(action) {
-    const nodeServerUrl = 'http://localhost:3000/send-webhook'; // Make sure this is correct
+    const nodeServerUrl = 'http://localhost:3000/send-webhook'; // Ensure this is correct
 
     const timestamp = new Date().toISOString(); // Get the timestamp
     console.log('Sending data to server:', { action, timestamp });  // Log data before sending
@@ -85,23 +85,18 @@ function addNotification(message) {
 // Function to toggle notification container visibility
 function toggleNotification() {
     const notificationContainer = document.getElementById('notificationContainer');
-    if (notificationContainer.style.display === 'none' || notificationContainer.style.display === '') {
-        notificationContainer.style.display = 'block';
-    } else {
-        notificationContainer.style.display = 'none';
-    }
+    notificationContainer.style.display = notificationContainer.style.display === 'none' || notificationContainer.style.display === '' ? 'block' : 'none';
 }
+
+// Function to show the map and hide login view
 function showMap() {
-    // Remove login view and add map view
     document.body.classList.remove("login-view");
     document.body.classList.add("map-view");
 
-    // Hide the login form and show the map and header only if they exist
+    // Hide the login form and show the map and header
     const container = document.querySelector(".container");
     if (container) container.classList.add("hidden");
 
-
-    
     const mapElement = document.getElementById("map");
     if (mapElement) mapElement.classList.remove("hidden");
 
@@ -109,7 +104,5 @@ function showMap() {
     if (header) header.classList.remove("hidden");
 
     // Force Leaflet to recalculate the map size
-    map.invalidateSize();  // This fixes the display issue when the map is revealed
+    map.invalidateSize();
 }
-
-
