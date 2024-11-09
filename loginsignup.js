@@ -1,7 +1,5 @@
-// Import Firebase modules
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { showMap, queueNotification } from "./map.js"; // Import queueNotification from map.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -18,76 +16,56 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Function to toggle between login and signup forms
-window.toggleForms = function() {
-    const loginForm = document.getElementById('login-form');
-    const signupForm = document.getElementById('signup-form');
-    
-    if (loginForm.style.display === 'none') {
-        loginForm.style.display = 'block'; // Show login form
-        signupForm.style.display = 'none'; // Hide signup form
-    } else {
-        loginForm.style.display = 'none'; // Hide login form
-        signupForm.style.display = 'block'; // Show signup form
-    }
+// Show the registration form and hide the login form
+document.getElementById("show-register").addEventListener("click", (e) => {
+    e.preventDefault();
+    document.getElementById("registration").classList.remove("hidden");
+    document.getElementById("login-form").classList.add("hidden");
+});
 
-    // Reset input fields when toggling forms
-    document.getElementById('login-email').value = '';
-    document.getElementById('login-password').value = '';
-    document.getElementById('signup-email').value = '';
-    document.getElementById('signup-password').value = '';
-};
+// Show the login form and hide the registration form
+document.getElementById("backtologin").addEventListener("click", (e) => {
+    e.preventDefault();
+    document.getElementById("registration").classList.add("hidden");
+    document.getElementById("login-form").classList.remove("hidden");
+});
 
-window.login = async function(event) {
-    event.preventDefault();
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
+// Registration function
+document.getElementById('btn_reg').addEventListener('click', (e) => {
+    e.preventDefault();
+    const email = document.getElementById("register-email").value;
+    const password = document.getElementById("register-password").value;
 
-    try {
-        await signInWithEmailAndPassword(auth, email, password);
-        alert('Login successful!');
+    createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+            alert("User Registered Successfully!");
+            document.getElementById("registration").classList.add("hidden");
+            document.getElementById("login-form").classList.remove("hidden");
+        })
+        .catch((error) => alert(error.message));
+});
 
-        // Create login notification
-        const loginNotification = {
-            action: "Login",
-            email: email, // Separate email
-            timestamp: new Date().toISOString(),
-        };
+// Login function
+document.getElementById("loginForm").addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById("login-email").value;
+    const password = document.getElementById("login-password").value;
 
-        queueNotification(loginNotification); // Queue the notification for display
-        showMap(); // Show the map after login
-    } catch (error) {
-        alert(error.message);
-    }
-};
+    signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+            showMap(); // Call to display map after successful login
+        })
+        .catch((error) => alert(error.message));
+});
 
-window.signup = async function(event) {
-    event.preventDefault();
-    const email = document.getElementById('signup-email').value;
-    const password = document.getElementById('signup-password').value;
+// Function to display the map and header, and hide the login form
+function showMap() {
+    // Remove login view and add map view
+    document.body.classList.remove("login-view");
+    document.body.classList.add("map-view");
 
-    try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        alert('Signup successful! Please log in.');
-        toggleForms(); // Switch to the login form
-    } catch (error) {
-        alert(error.message);
-    }
-};
-
-// Function to log out user and reset forms
-window.logout = function() {
-    // Reset input fields
-    document.getElementById('login-email').value = '';
-    document.getElementById('login-password').value = '';
-    document.getElementById('signup-email').value = '';
-    document.getElementById('signup-password').value = '';
-
-    // Reset notifications
-    const notificationElement = document.getElementById('notification');
-    notificationElement.innerHTML = ''; // Clear notifications
-
-    // Show the login form
-    document.getElementById('login-form').style.display = 'block';
-    document.getElementById('signup-form').style.display = 'none';
-};
+    // Hide the login form and show the map and header
+    document.querySelector(".container").classList.add("hidden");
+    document.getElementById("map").classList.remove("hidden");
+    document.querySelector(".header").classList.remove("hidden");
+}

@@ -1,60 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Meta and CSS links -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login and Signup with Firebase</title>
+    <title>Login & Map</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
-<body>
+<body class="login-view">
+    <!-- Login Form Container -->
     <div class="container">
-        <h1>Welcome</h1>
-        <form id="login-form" onsubmit="login(event)">
+        <div id="login-form">
             <h2>Login</h2>
-            <input type="email" id="login-email" placeholder="Email" required>
-            <input type="password" id="login-password" placeholder="Password" required>
-            <button type="submit">Login</button>
-            <p><a href="#" onclick="toggleForms()">Sign Up</a></p> <!-- Toggle to Signup -->
-        </form>
-        
-        <form id="signup-form" style="display: none;" onsubmit="signup(event)">
-            <h2>Sign Up</h2>
-            <input type="email" id="signup-email" placeholder="Email" required>
-            <input type="password" id="signup-password" placeholder="Password" required>
-            <button type="submit">Sign Up</button>
-            <p><a href="#" onclick="toggleForms()">Login</a></p> <!-- Toggle to Login -->
-        </form>
-        
-    </div>
-
-    <div id="map-container" style="display: none;">
-        <h2>Search Location</h2>
-        <div id="search-container">
-            <input type="text" id="search-input" placeholder="Search location...">
-            <button id="search-button">Search</button>
-            <div class="notification-container">
-                <button id="notification-button">🔔</button>
-                <div id="notification-indicator" class="notification-indicator" style="display: none;"></div>
-                <button id="logout-button">Logout</button>
-            </div>            
+            <form id="loginForm" action="/login" method="post">
+                <input type="email" id="login-email" name="email" placeholder="Enter your email" required>
+                <input type="password" id="login-password" name="password" placeholder="Enter your password" required>
+                <input type="submit" value="Login">
+            </form>
+            <p>Don't have an account? <a href="#" id="show-register">Register</a></p>
         </div>
-        <div id="map"></div>
+
+        <!-- Registration Form -->
+        <div id="registration" class="hidden">
+            <h2>Signup</h2>
+            <form id="registerForm" action="/register" method="post">
+                <input type="email" id="register-email" name="email" placeholder="Enter your email" required>
+                <input type="password" id="register-password" name="password" placeholder="Create your password" required>
+                <input type="submit" id="btn_reg" value="Register">
+            </form>
+            <p>Already have an account? <a href="#" id="backtologin">Login</a></p>
+        </div>
+        
+        <!-- Login Success Message -->
+        <div id="login-success" class="hidden">
+            <h2>Login Success</h2>
+            <p>Welcome! You have successfully logged in.</p>
+            <button onclick="showMap()">Go to Map</button>
+        </div>  
     </div>
 
-    <!-- Modal and Overlay for Notification -->
-    <div id="overlay" class="overlay" style="display: none;"></div>
-    <div id="notification-modal" class="notification-modal" style="display: none;">
-        <div class="modal-content">
-            <span id="close-button" class="close-button">&times;</span>
-            <div class="notification">
-                <p id="notification">Last searched location: <span id="last-location">[Your Location]</span></p>
-            </div>
+    <!-- Header for the map - hidden initially -->
+    <div class="header hidden">
+        <h1>Location</h1>
+        <input type="text" id="searchBox" placeholder="Enter location name...">
+        <button onclick="searchLocation()">Search</button>
+        <button id="notificationButton" onclick="toggleNotification()">🔔</button>
+        
+        <!-- Notification Container -->
+        <div id="notificationContainer">
+            <h4>&nbsp;&nbsp;Search History</h4>
+            <div id="notifications"></div>
         </div>
     </div>
 
+    <div id="map" class="hidden"></div>
+
+    <!-- JavaScript and Leaflet scripts -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="loginsignup.js" type="module"></script>
-    <script src="map.js" type="module"></script>
+    <script type="module" src="loginsignup.js"></script>
+    <script src="map.js"></script>
 </body>
 </html>

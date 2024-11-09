@@ -1,281 +1,113 @@
-let notifications = []; // Array to store all notifications
-let isNotificationOpen = false; // Flag to track if the notification modal is open
-let isLoggedIn = false; // Flag to track if the user is logged in
-let currentUser = null; // To store the current logged-in user
+// Initialize the map and set view to a default location
+var map = L.map('map').setView([51.505, -0.09], 13);
 
-let requestQueue = [];
-let isRequestProcessing = false;
+// Load OpenStreetMap tiles
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+}).addTo(map);
 
-document.addEventListener('DOMContentLoaded', () => {
-    const loginButton = document.getElementById('login-button');
-    if (loginButton) {
-        loginButton.addEventListener('click', () => {
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            // Handle login logic and call onLoginSuccess with email
-            onLoginSuccess(email);
-        });
-    }
-});
+// Function to search for a location using the text box input
+function searchLocation() {
+    var query = document.getElementById('searchBox').value;
 
-// Function to be called when user successfully logs in
-function onLoginSuccess(email) {
-    isLoggedIn = true;
-    currentUser = email; // Store the current user's email
-    notifications = []; // Clear previous notifications when a new user logs in
-    showMap(); // Call showMap when login is successful
-    const loginNotification = {
-        action: "Login",
-        email: email,
-        timestamp: new Date().toISOString(),
-    };
-    queueNotification(loginNotification); // Queue the login notification for the new user
-}
+    if (query) {
+        // Geocoding API to search for the location
+        var url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
 
-// Function to show map and set up map functionality
-export function showMap() {
-    document.querySelector('.container').style.display = 'none';
-    document.getElementById('map-container').style.display = 'block';
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    const { lat, lon, display_name } = data[0];
 
-    const map = L.map('map').setView([51.505, -0.09], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+                    // Clear existing markers
+                    map.eachLayer(layer => {
+                        if (layer instanceof L.Marker) {
+                            map.removeLayer(layer);
+                        }
+                    });
 
-    const searchButton = document.getElementById('search-button');
-    searchButton.addEventListener('click', () => {
-        if (isNotificationOpen) { 
-            alert('Please close the notification before searching another location.');
-            return; 
-        }
-        const query = document.getElementById('search-input').value;
-        searchLocation(query, map);
-    });
-
-    document.getElementById('search-input').addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            if (isNotificationOpen) {
-                alert('Please close the notification before searching another location.');
-                return; 
-            }
-            const query = event.target.value;
-            searchLocation(query, map);
-        }
-    });
-
-    const notificationButton = document.getElementById('notification-button');
-    notificationButton.addEventListener('click', () => {
-        showNotification(); // Show notification when button is clicked
-        hideNotificationIndicator(); // Hide the notification indicator
-    });
-
-    const logoutButton = document.getElementById('logout-button');
-    logoutButton.addEventListener('click', () => {
-        logout(); // Call logout function
-    });
-
-    document.getElementById('close-button').addEventListener('click', () => {
-        closeNotification(); // Close the notification modal
-        hideNotificationIndicator(); // Hide the indicator when modal is closed
-    });
-}
-
-// Function to process and send notifications
-async function sendWebhook(notification) {
-    const serverURL = 'http://localhost:3000/send-webhook'; // Update the URL to the new endpoint
-    const response = await fetch(serverURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(notification)
-    });
-
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to send notification to server: ${errorText}`);
-    }
-
-    return await response.json();
-}
-
-// Function to process notification queue
-async function processQueue() {
-    if (isRequestProcessing || requestQueue.length === 0) return;
-
-    isRequestProcessing = true;
-    const notification = requestQueue.shift();
-
-    try {
-        await sendWebhook(notification);
-        console.log("Notification sent successfully:", notification);
-        notifications.unshift(notification);
-        updateNotificationScroll(); // Check for scroll update after adding notification
-    } catch (error) {
-        console.error("Failed to send notification:", error);
-        requestQueue.unshift(notification);
-    } finally {
-        isRequestProcessing = false;
-        if (requestQueue.length > 0) {
-            setTimeout(processQueue, 500);
-        }
-    }
-}
-
-// Function to update the scrollability of the notification container
-function updateNotificationScroll() {
-    const notificationContainer = document.getElementById('notification');
-    if (notifications.length > 3) {
-        notificationContainer.classList.add('scrollable');  // Enable scrolling
+                    map.setView([lat, lon], 13);
+                    L.marker([lat, lon]).addTo(map).bindPopup(display_name).openPopup();
+                    sendWebhookNotification('Location search: ' + display_name);
+                    addNotification('Searched for: ' + display_name); // Add notification for search history
+                } else {
+                    alert("Location not found!");
+                }
+            })
+            .catch(error => console.log('Error: ', error));
     } else {
-        notificationContainer.classList.remove('scrollable');  // Disable scrolling
+        alert("Please enter a location name!");
     }
 }
 
+// Function to send a webhook notification
+function sendWebhookNotification(action) {
+    const nodeServerUrl = 'http://localhost:3000/send-webhook'; // Make sure this is correct
 
-// Function to queue notifications and show indicator
-export function queueNotification(notification) {
-    requestQueue.push(notification);
-    showNotificationIndicator();
-    processQueue();
+    const timestamp = new Date().toISOString(); // Get the timestamp
+    console.log('Sending data to server:', { action, timestamp });  // Log data before sending
+
+    fetch(nodeServerUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ action, timestamp }),
+    })
+    .then(response => {
+        console.log('Response status:', response.status);  // Log response status
+        if (!response.ok) {
+            throw new Error('Failed to send data to webhook: ' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.message === 'Data sent to webhook successfully') {
+            console.log('POST notification sent successfully');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('There was an error sending the notification: ' + error.message);
+    });
 }
 
-// Function to search for a location using OpenStreetMap geocoding API
-function searchLocation(query, map) {
-    const geocodingUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1`;
-
-    console.log('Fetching location for query:', query);
-    console.log('Geocoding URL:', geocodingUrl);
-
-    fetch(geocodingUrl)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data && data.length > 0) {
-                const location = data[0];
-                map.setView([location.lat, location.lon], 13);
-                L.marker([location.lat, location.lon])
-                    .addTo(map)
-                    .bindPopup(location.display_name)
-                    .openPopup();
-
-                const notification = {
-                    action: "Location Search",
-                    location: location.display_name,
-                    timestamp: new Date().toISOString(),
-                };
-
-                queueNotification(notification);
-            } else {
-                alert('Location not found');
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching location:', error);
-            alert('Error fetching location: ' + error.message);
-        });
+// Function to add a notification to the notification container
+function addNotification(message) {
+    const notificationsContainer = document.getElementById('notifications');
+    const notification = document.createElement('div');
+    notification.classList.add('notification');
+    notification.textContent = message;
+    notificationsContainer.appendChild(notification);
 }
 
-// Function to show notification modal
-function showNotification() {
-    const overlay = document.getElementById('overlay');
-    const notificationModal = document.getElementById('notification-modal');
-    const notificationElement = document.getElementById('notification');
-
-    notificationElement.innerHTML = '';
-
-    if (notifications.length > 0) {
-        notifications.forEach((notif) => {
-            const notificationItem = document.createElement('div');
-            notificationItem.className = 'notification-item';
-
-            if (notif.action === "Login") {
-                notificationItem.innerHTML = `<strong>Action:</strong> ${notif.action} - <strong>Email:</strong> ${notif.email} - <strong>Timestamp:</strong> ${notif.timestamp}`;
-            } else {
-                notificationItem.innerHTML = `<strong>Action:</strong> ${notif.action} - <strong>Location:</strong> ${notif.location} - <strong>Timestamp:</strong> ${notif.timestamp}`;
-            }
-
-            notificationElement.appendChild(notificationItem);
-        });
+// Function to toggle notification container visibility
+function toggleNotification() {
+    const notificationContainer = document.getElementById('notificationContainer');
+    if (notificationContainer.style.display === 'none' || notificationContainer.style.display === '') {
+        notificationContainer.style.display = 'block';
     } else {
-        notificationElement.innerHTML = '<p>No notifications available.</p>';
+        notificationContainer.style.display = 'none';
     }
+}
+function showMap() {
+    // Remove login view and add map view
+    document.body.classList.remove("login-view");
+    document.body.classList.add("map-view");
 
-    overlay.style.display = 'block';
-    notificationModal.style.display = 'block';
-    isNotificationOpen = true;
+    // Hide the login form and show the map and header only if they exist
+    const container = document.querySelector(".container");
+    if (container) container.classList.add("hidden");
+
+    const mapElement = document.getElementById("map");
+    if (mapElement) mapElement.classList.remove("hidden");
+
+    const header = document.querySelector(".header");
+    if (header) header.classList.remove("hidden");
+
+    // Force Leaflet to recalculate the map size
+    map.invalidateSize();  // This fixes the display issue when the map is revealed
 }
 
-// Function to hide notification indicator
-function hideNotificationIndicator() {
-    const notificationIndicator = document.getElementById('notification-indicator');
-    notificationIndicator.style.display = 'none';
-}
 
-// Function to show notification indicator
-function showNotificationIndicator() {
-    const notificationIndicator = document.getElementById('notification-indicator');
-    notificationIndicator.style.display = 'block';
-}
-
-// Function to close the notification modal
-function closeNotification() {
-    const overlay = document.getElementById('overlay');
-    const notificationModal = document.getElementById('notification-modal');
-
-    overlay.style.display = 'none';
-    notificationModal.style.display = 'none';
-    isNotificationOpen = false;
-}
-
-// Function to handle logout functionality
-function logout() {
-    // Clear notifications when user logs out
-    notifications = [];
-    currentUser = null;
-    isLoggedIn = false;
-    clearInputFields();
-    showLoginForm();
-}
-
-// Function to clear input fields
-function clearInputFields() {
-    document.getElementById('login-email').value = '';
-    document.getElementById('login-password').value = '';
-    document.getElementById('signup-email').value = '';
-    document.getElementById('signup-password').value = '';
-}
-
-// Function to show the login form after logout
-function showLoginForm() {
-    document.querySelector('.container').style.display = 'block';
-    document.getElementById('map-container').style.display = 'none';
-}
-
-// Dummy functions to simulate login and signup
-function login(event) {
-    event.preventDefault();
-    const email = document.getElementById('login-email').value;
-    const notification = {
-        action: "Login",
-        email: email,
-        timestamp: new Date().toISOString(),
-    };
-    queueNotification(notification);
-    onLoginSuccess(email);
-}
-
-function signup(event) {
-    event.preventDefault();
-    const email = document.getElementById('signup-email').value;
-    const notification = {
-        action: "Sign Up",
-        email: email,
-        timestamp: new Date().toISOString(),
-    };
-    queueNotification(notification);
-    alert('Sign up successful! You can now log in.');
-}
