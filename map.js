@@ -100,6 +100,8 @@ function showMap() {
     const container = document.querySelector(".container");
     if (container) container.classList.add("hidden");
 
+
+    
     const mapElement = document.getElementById("map");
     if (mapElement) mapElement.classList.remove("hidden");
 
