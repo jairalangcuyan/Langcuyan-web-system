@@ -12,9 +12,13 @@ body {
     align-items: center;
     height: 100vh;
     background-image: url('bg1.jpg');
+    background-size: cover; /* Ensures the image covers the entire screen */
+    background-position: center center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
     color: #333;
     flex-direction: column; /* Allow for column layout for header and map */
 }
+
 
 /* Container (for login/registration forms) */
 .container {
