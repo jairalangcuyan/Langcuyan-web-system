@@ -11,7 +11,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f4f4f4;
+    background-image: url('bg1.jpg');
     color: #333;
     flex-direction: column; /* Allow for column layout for header and map */
 }
