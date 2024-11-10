@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map</title>
+    <link rel="stylesheet" href="map.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+</head>
+<body>
+    <!-- Map Container -->
+    <div class="map-view">
+        <!-- Header -->
+        <div class="header">
+            <div class="left-side">
+                <h1>Location</h1>
+                <input type="text" id="searchBox" placeholder="Enter location name...">
+                <button onclick="searchLocation()">Search</button>
+            </div>
+            <div class="right-side">
+                <button id="notificationButton" onclick="toggleNotification()">🔔</button>
+                <button id="logoutButton" onclick="logout()">Logout</button>  <!-- Logout button -->
+            </div>
+        </div>
+
+ <!-- Notification Overlay and Container -->
+<div id="notificationOverlay" onclick="toggleNotification()"></div>
+<div id="notificationContainer">
+    <span class="close-button" onclick="toggleNotification()">✖</span>
+    <h4>&nbsp;&nbsp;Search History</h4>
+    <div id="notifications"></div>
+</div>
+
+
+        <!-- Map Container -->
+        <div id="map"></div>
+    </div>
+
+    <!-- JavaScript and Leaflet scripts -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="map.js"></script>
+</body>
+</html>

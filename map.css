@@ -1,0 +1,171 @@
+/* Notification Overlay */
+#notificationOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    z-index: 999;
+}
+
+/* Notification Container */
+#notificationContainer {
+    position: fixed;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Perfect centering */
+    width: 800px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    z-index: 1000;
+    text-align: center;
+    display: none;
+}
+
+/* Close Button for Notification Container */
+.close-button {
+    position: absolute;
+    top: 8px; /* Adjust top position */
+    right: 8px; /* Adjust right position */
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    color: #555;
+}
+
+/* General Reset and Body Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+    color: #333;
+    flex-direction: column;
+    overflow: hidden; /* Prevent overflow issues */
+}
+
+/* Map View */
+.map-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 1px;
+    box-sizing: border-box;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    background-color: rgba(243, 121, 121, 0.8);
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header .left-side {
+    display: flex;
+    align-items: center;
+}
+
+.header .left-side h1 {
+    font-size: 24px;
+    margin-right: 15px;
+}
+
+.header .left-side input[type="text"] {
+    padding: 8px;
+    width: 200px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.header .left-side button {
+    padding: 10px 20px;
+    background-color: #000000;
+    color: white;
+    border: 1px solid #4CAF50;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.header .left-side button:hover {
+    background-color: #45a049;
+    border-color: #45a049;
+}
+
+.header .right-side button {
+    color: #4CAF50;
+    border: 1px solid #4CAF50;
+    background-color: #000000;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 20px;
+}
+
+.header .right-side button:hover {
+    background-color: #45a049;
+    color: white;
+    border-color: #45a049;
+}
+
+/* Map Container */
+#map {
+    width: 100%;
+    height: 100vh;
+    display: block;
+    margin-top: 80px;
+}
+
+/* Notifications Container */
+#notifications {
+    padding: 10px;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* Unique Border for Each Notification */
+.notification {
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+/* Different border colors for notifications */
+.notification:nth-child(odd) {
+    border: 2px solid #ff6347; /* Tomato */
+}
+
+.notification:nth-child(even) {
+    border: 2px solid #4682b4; /* SteelBlue */
+}
+
+.hidden {
+    display: none;
+}

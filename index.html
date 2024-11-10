@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login & Map</title>
+    <title>Login & Signup</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body class="login-view">
     <!-- Login Form Container -->
@@ -35,29 +34,9 @@
         <div id="login-success" class="hidden">
             <h2>Login Success</h2>
             <p>Welcome! You have successfully logged in.</p>
-            <button onclick="showMap()">Go to Map</button>
         </div>  
     </div>
-
-    <!-- Header for the map - hidden initially -->
-    <div class="header hidden">
-        <h1>Location</h1>
-        <input type="text" id="searchBox" placeholder="Enter location name...">
-        <button onclick="searchLocation()">Search</button>
-        <button id="notificationButton" onclick="toggleNotification()">🔔</button>
-        
-        <!-- Notification Container -->
-        <div id="notificationContainer">
-            <h4>&nbsp;&nbsp;Search History</h4>
-            <div id="notifications"></div>
-        </div>
-    </div>
-
-    <div id="map" class="hidden"></div>
-
-    <!-- JavaScript and Leaflet scripts -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    
     <script type="module" src="loginsignup.js"></script>
-    <script src="map.js"></script>
 </body>
 </html>

@@ -46,6 +46,7 @@ document.getElementById('btn_reg').addEventListener('click', (e) => {
 });
 
 // Login function
+// Login function
 document.getElementById("loginForm").addEventListener('submit', (e) => {
     e.preventDefault();
     const email = document.getElementById("login-email").value;
@@ -53,19 +54,13 @@ document.getElementById("loginForm").addEventListener('submit', (e) => {
 
     signInWithEmailAndPassword(auth, email, password)
         .then(() => {
-            showMap(); // Call to display map after successful login
+            // If login is successful, show success alert
+            alert("Login Successfully!");
+            // Redirect to map.html after successful login
+            window.location.href = 'map.html'; // Change to the actual path of your map.html file
         })
-        .catch((error) => alert(error.message));
+        .catch((error) => {
+            // If login fails, show error alert
+            alert("Email or Password is Incorrect! Please Try Again!");
+        });
 });
-
-// Function to display the map and header, and hide the login form
-function showMap() {
-    // Remove login view and add map view
-    document.body.classList.remove("login-view");
-    document.body.classList.add("map-view");
-
-    // Hide the login form and show the map and header
-    document.querySelector(".container").classList.add("hidden");
-    document.getElementById("map").classList.remove("hidden");
-    document.querySelector(".header").classList.remove("hidden");
-}

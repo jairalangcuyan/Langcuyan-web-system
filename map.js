@@ -1,36 +1,62 @@
 // Initialize the map and set view to a default location
-var map = L.map('map').setView([51.505, -0.09], 13);
+var map;
 
-// Load OpenStreetMap tiles
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
-}).addTo(map);
+function initializeMap() {
+    if (!map) {
+        // Initialize the map centered at a default location (latitude, longitude) and zoom level
+        map = L.map('map').setView([51.505, -0.09], 13);
+
+        // Load OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Optional: Add a marker at the default location
+        L.marker([51.5, -0.09]).addTo(map)
+            .bindPopup("Location")
+            .openPopup();
+    }
+}
+
+// Function to show the map after login success
+function showMap() {
+    initializeMap();
+}
 
 // Function to search for a location using the text box input
 function searchLocation() {
     var query = document.getElementById('searchBox').value;
 
     if (query) {
+        document.getElementById('searchBox').disabled = true;
+        document.querySelector('.header .left-side button').disabled = true;
+
         // Geocoding API to search for the location
         var url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
-
+        
         fetch(url)
             .then(response => response.json())
             .then(data => {
                 if (data.length > 0) {
                     const { lat, lon, display_name } = data[0];
 
-                    // Clear existing markers
+                    // Clear existing markers on the map
                     map.eachLayer(layer => {
                         if (layer instanceof L.Marker) {
                             map.removeLayer(layer);
                         }
                     });
 
+                    // Set map view to the new coordinates
                     map.setView([lat, lon], 13);
-                    L.marker([lat, lon]).addTo(map).bindPopup(display_name).openPopup();
-                    sendWebhookNotification('Location search: ' + display_name);
-                    addNotification('Searched for: ' + display_name); // Add notification for search history
+
+                    // Add a marker at the new location
+                    L.marker([lat, lon]).addTo(map)
+                        .bindPopup(display_name)
+                        .openPopup();
+
+                    addNotification('Searched for: ' + display_name);
+
                 } else {
                     alert("Location not found!");
                 }
@@ -41,68 +67,55 @@ function searchLocation() {
     }
 }
 
-// Function to send a webhook notification
-function sendWebhookNotification(action) {
-    const nodeServerUrl = 'http://localhost:3000/send-webhook'; // Ensure this is correct
+// Function to toggle notification container and overlay visibility
+function toggleNotification() {
+    const notificationOverlay = document.getElementById('notificationOverlay');
+    const notificationContainer = document.getElementById('notificationContainer');
+    const searchBox = document.getElementById('searchBox');
+    const searchButton = document.querySelector('.header .left-side button');
+    const isHidden = notificationOverlay.style.display === 'none' || notificationOverlay.style.display === '';
 
-    const timestamp = new Date().toISOString(); // Get the timestamp
-    console.log('Sending data to server:', { action, timestamp });  // Log data before sending
-
-    fetch(nodeServerUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ action, timestamp }),
-    })
-    .then(response => {
-        console.log('Response status:', response.status);  // Log response status
-        if (!response.ok) {
-            throw new Error('Failed to send data to webhook: ' + response.statusText);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.message === 'Data sent to webhook successfully') {
-            console.log('POST notification sent successfully');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('There was an error sending the notification: ' + error.message);
-    });
+    // Toggle overlay and notification container visibility
+    if (isHidden) {
+        notificationOverlay.style.display = 'block';
+        notificationContainer.style.display = 'block';
+        
+        // Disable search inputs when notification is visible
+        searchBox.disabled = true;
+        searchButton.disabled = true;
+    } else {
+        notificationOverlay.style.display = 'none';
+        notificationContainer.style.display = 'none';
+        
+        // Re-enable search inputs when notification is closed
+        searchBox.disabled = false;
+        searchButton.disabled = false;
+    }
 }
 
-// Function to add a notification to the notification container
+// Notification handling
 function addNotification(message) {
     const notificationsContainer = document.getElementById('notifications');
     const notification = document.createElement('div');
     notification.classList.add('notification');
     notification.textContent = message;
-    notificationsContainer.appendChild(notification);
+
+    notificationsContainer.insertBefore(notification, notificationsContainer.firstChild);
 }
 
-// Function to toggle notification container visibility
-function toggleNotification() {
-    const notificationContainer = document.getElementById('notificationContainer');
-    notificationContainer.style.display = notificationContainer.style.display === 'none' || notificationContainer.style.display === '' ? 'block' : 'none';
+// Logout function
+function logout() {
+    // Clear any stored user data or session (if necessary)
+    if (window.location.pathname === "/index.html" || window.location.pathname === "/") {
+        document.getElementById("login-email").value = '';
+        document.getElementById("login-password").value = '';
+    }
+    
+    window.location.href = 'index.html'; 
 }
 
-// Function to show the map and hide login view
-function showMap() {
-    document.body.classList.remove("login-view");
-    document.body.classList.add("map-view");
 
-    // Hide the login form and show the map and header
-    const container = document.querySelector(".container");
-    if (container) container.classList.add("hidden");
-
-    const mapElement = document.getElementById("map");
-    if (mapElement) mapElement.classList.remove("hidden");
-
-    const header = document.querySelector(".header");
-    if (header) header.classList.remove("hidden");
-
-    // Force Leaflet to recalculate the map size
-    map.invalidateSize();
-}
+// Ensure the map is initialized once the page loads
+window.onload = function() {
+    initializeMap();
+};

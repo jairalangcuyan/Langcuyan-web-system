@@ -1,112 +1,129 @@
-/* General Styles for the Body */
-body {
-    background-image: url('bg1.jpg');
-    background-size: cover;
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+/* General Reset and Body Styles */
+* {
     margin: 0;
-    height: 100vh;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+    color: #333;
+    flex-direction: column; /* Allow for column layout for header and map */
 }
 
-/* Remove background image for map view */
-body.map-view {
-    background-image: none;
-}
-
-/* Container for the Login/Registration Form */
+/* Container (for login/registration forms) */
 .container {
-    max-width: 400px;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    color: #000000;
-}
-
-/* Headings */
-h2 {
     text-align: center;
-    margin-bottom: 20px;
+    max-width: 400px;
+    width: 100%;
 }
 
-/* Form Input Styling */
-input[type="email"],
-input[type="password"],
-input[type="submit"] {
-    width: 90%;
-    padding: 10px;
-    margin: 10px auto;
-    border: 2px solid #000000;
-    border-radius: 4px;
-    display: block;
-}
-
-input[type="submit"] {
-    background-color: #5cb85c;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-input[type="submit"]:hover {
-    background-color: #4cae4c;
-}
-
+/* Hidden class to hide elements */
 .hidden {
     display: none;
 }
 
-/* Link Styling in Forms */
-a {
-    color: #4cae4c;
-    text-decoration: none;
+/* Login Form Styles */
+#login-form {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-a:hover {
-    text-decoration: underline;
+#login-form h2 {
+    margin-bottom: 20px;
 }
 
-/* Notification and Map Elements */
-#notificationButton {
-    background-color: transparent;
-    border: none;
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    margin-left: auto;
-}
-
-/* Show header only in map view */
-body.map-view .header {
-    display: block;
-}
-
-/* Map Styling */
-#map {
+#login-form input {
     width: 100%;
-    height: 500px;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#login-form input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+#login-form input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+#login-form p {
     margin-top: 20px;
 }
 
-#notificationContainer {
-    background-color: rgba(255, 255, 255, 0.8);
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    padding: 10px;
-    border-radius: 8px;
-    max-width: 300px;
-    display: none;
+#login-form a {
+    color: #4CAF50;
+    text-decoration: none;
 }
 
-.notification {
-    background: #f9f9f9;
-    border: 1px solid #ddd;
+/* Registration Form Styles */
+#registration {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#registration h2 {
+    margin-bottom: 20px;
+}
+
+#registration input {
+    width: 100%;
     padding: 10px;
-    margin-bottom: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
     border-radius: 4px;
+}
+
+#registration input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+#registration input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+#registration p {
+    margin-top: 20px;
+}
+
+#registration a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+/* Success Message Styles */
+#login-success {
+    text-align: center;
+    padding: 30px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#login-success button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#login-success button:hover {
+    background-color: #45a049;
 }
